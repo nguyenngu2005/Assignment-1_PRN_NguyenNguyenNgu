@@ -1,0 +1,358 @@
+@model IEnumerable<Repositories.Models.NewsArticle>
+@using Repositories.Models
+@{
+    ViewData["Title"] = "Quản lý Bài viết";
+}
+
+<style>
+    /* Localized styling to make table highly compact so it fits perfectly on all screens */
+    .table-compact > :not(caption) > * > * {
+        padding: 8px 10px !important;
+        font-size: 0.825rem !important;
+    }
+    .table-compact td {
+        vertical-align: middle;
+    }
+    .table-compact .btn-sm {
+        padding: 4px 8px !important;
+        font-size: 0.75rem !important;
+        border-radius: 6px !important;
+    }
+    .badge-compact {
+        padding: 3px 6px !important;
+        font-size: 0.65rem !important;
+        border-radius: 6px !important;
+        text-transform: none !important;
+        margin-bottom: 2px;
+        display: inline-block;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Quản lý Bài viết (News Article)</h2>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="bi bi-plus-circle me-1"></i> Viết bài mới
+        </button>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-hover table-bordered table-compact mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 6%;">Mã bài</th>
+                        <th style="width: 22%;">Tiêu đề (Title)</th>
+                        <th style="width: 12%;">Danh mục</th>
+                        <th style="width: 22%;">Thẻ Tags</th>
+                        <th style="width: 12%;">Người tạo</th>
+                        <th style="width: 11%;">Ngày tạo</th>
+                        <th class="text-center" style="width: 7%;">Trạng thái</th>
+                        <th class="text-center" style="width: 8%; white-space: nowrap;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.NewsArticleId</td>
+                            <td style="max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="@item.NewsTitle">
+                                <span class="fw-bold text-white">@item.NewsTitle</span>
+                            </td>
+                            <td>@(item.Category != null ? item.Category.CategoryName : "N/A")</td>
+                            <td style="white-space: normal;">
+                                @if (item.Tags != null && item.Tags.Any())
+                                {
+                                    foreach (var tag in item.Tags)
+                                    {
+                                        <span class="badge bg-info text-dark badge-compact me-1">@tag.TagName</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted" style="font-size: 0.75rem;">Không có Tag</span>
+                                }
+                            </td>
+                            <td>@(item.CreatedBy != null ? item.CreatedBy.AccountName : "N/A")</td>
+                            <td>@(item.CreatedDate?.ToString("dd/MM/yyyy HH:mm"))</td>
+                            <td class="text-center">
+                                @if (item.NewsStatus == true)
+                                {
+                                    <span class="badge bg-success">Published</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Draft</span>
+                                }
+                            </td>
+                            <td class="text-center" style="white-space: nowrap;">
+                                @{
+                                    var tagIds = item.Tags != null ? string.Join(",", item.Tags.Select(t => t.TagId)) : "";
+                                }
+                                <!-- Modern data-* attributes completely eliminate Javascript string escaping & newline parsing errors! -->
+                                <button type="button" class="btn btn-sm btn-outline-primary edit-article-btn"
+                                        data-id="@item.NewsArticleId"
+                                        data-title="@item.NewsTitle"
+                                        data-headline="@item.Headline"
+                                        data-content="@item.NewsContent"
+                                        data-source="@item.NewsSource"
+                                        data-category="@item.CategoryId"
+                                        data-status="@item.NewsStatus"
+                                        data-tags="@tagIds">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-1"
+                                        onclick="confirmDelete('@item.NewsArticleId')">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                                <form id="deleteForm-@item.NewsArticleId" asp-action="Delete" asp-route-id="@item.NewsArticleId" method="post" style="display:none;"></form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Viết Bài Mới -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-action="Create" method="post">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Viết Bài Mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Mã bài viết (ID) <span class="text-danger">*</span></label>
+                        <input type="text" name="NewsArticleId" class="form-control" required />
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-bold">Danh mục <span class="text-danger">*</span></label>
+                        <select name="CategoryId" class="form-select" required>
+                            <option value="">-- Chọn danh mục --</option>
+                            @if (ViewBag.Categories != null)
+                            {
+                                foreach (var cat in ViewBag.Categories)
+                                {
+                                    if (cat.IsActive == true)
+                                    {
+                                        <option value="@cat.CategoryId">@cat.CategoryName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Tiêu đề (Title) <span class="text-danger">*</span></label>
+                        <input type="text" name="NewsTitle" class="form-control" required />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Tiêu đề phụ (Headline) <span class="text-danger">*</span></label>
+                        <input type="text" name="Headline" class="form-control" required />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Nội dung (Content)</label>
+                        <textarea name="NewsContent" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nguồn (Source)</label>
+                        <input type="text" name="NewsSource" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Trạng thái</label>
+                        <select name="NewsStatus" class="form-select">
+                            <option value="true">Published (Đã xuất bản)</option>
+                            <option value="false">Draft (Bản nháp)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Checklist Tags (available only: belongs to 0 articles) -->
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Thẻ Tags liên kết <span class="text-secondary">(Mỗi thẻ tag chỉ thuộc tối đa 1 bài viết theo đề bài)</span></label>
+                        <div class="d-flex flex-wrap gap-2 p-3" style="background: rgba(0, 0, 0, 0.2); border: 1.5px solid var(--glass-border); border-radius: 12px; max-height: 120px; overflow-y: auto;">
+                            @if (ViewBag.AvailableTags != null && ((List<Tag>)ViewBag.AvailableTags).Any())
+                            {
+                                foreach (var tag in ViewBag.AvailableTags)
+                                {
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="selectedTagIds" value="@tag.TagId" id="createTag-@tag.TagId">
+                                        <label class="form-check-label text-white" for="createTag-@tag.TagId">@tag.TagName</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted" style="font-size: 0.85rem;">Không có thẻ tag trống nào khả dụng (các tag khác đã thuộc bài viết khác).</span>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Lưu bài viết</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cập nhật Bài viết -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-action="Edit" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Cập nhật Bài viết</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Mã bài viết (ID)</label>
+                        <input type="text" id="editId" name="NewsArticleId" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-bold">Danh mục <span class="text-danger">*</span></label>
+                        <select id="editCategoryId" name="CategoryId" class="form-select" required>
+                             @if (ViewBag.Categories != null)
+                             {
+                                 foreach (var cat in ViewBag.Categories)
+                                 {
+                                     if (cat.IsActive == true)
+                                     {
+                                         <option value="@cat.CategoryId">@cat.CategoryName</option>
+                                     }
+                                     else
+                                     {
+                                         <option value="@cat.CategoryId" disabled>@cat.CategoryName (Inactive)</option>
+                                     }
+                                 }
+                             }
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Tiêu đề (Title) <span class="text-danger">*</span></label>
+                        <input type="text" id="editTitle" name="NewsTitle" class="form-control" required />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Tiêu đề phụ (Headline) <span class="text-danger">*</span></label>
+                        <input type="text" id="editHeadline" name="Headline" class="form-control" required />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Nội dung (Content)</label>
+                        <textarea id="editContent" name="NewsContent" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nguồn (Source)</label>
+                        <input type="text" id="editSource" name="NewsSource" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Trạng thái</label>
+                        <select id="editStatus" name="NewsStatus" class="form-select">
+                            <option value="True">Published (Đã xuất bản)</option>
+                            <option value="False">Draft (Bản nháp)</option>
+                        </select>
+                    </div>
+
+                    <!-- Checklist Tags (All tags with dynamic JS locking) -->
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Thẻ Tags liên kết <span class="text-secondary">(Mỗi thẻ tag chỉ thuộc tối đa 1 bài viết theo đề bài)</span></label>
+                        <div class="d-flex flex-wrap gap-2 p-3" style="background: rgba(0, 0, 0, 0.2); border: 1.5px solid var(--glass-border); border-radius: 12px; max-height: 120px; overflow-y: auto;">
+                            @if (ViewBag.AllTags != null && ((List<Tag>)ViewBag.AllTags).Any())
+                            {
+                                foreach (var tag in ViewBag.AllTags)
+                                {
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input edit-tag-checkbox" type="checkbox" name="selectedTagIds" value="@tag.TagId" id="editTag-@tag.TagId">
+                                        <label class="form-check-label text-white" for="editTag-@tag.TagId" data-name="@tag.TagName">@tag.TagName</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Lấy danh sách Tag ID đã thuộc các bài viết khác từ Razor ViewBag
+        const takenTagIds = @Html.Raw(Json.Serialize(ViewBag.TakenTagIds)) || [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Đăng ký sự kiện click cho tất cả các nút Edit một cách hiện đại qua Data-* Attributes
+            document.querySelectorAll('.edit-article-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const title = this.getAttribute('data-title');
+                    const headline = this.getAttribute('data-headline');
+                    const content = this.getAttribute('data-content');
+                    const source = this.getAttribute('data-source');
+                    const categoryId = this.getAttribute('data-category');
+                    const status = this.getAttribute('data-status');
+                    const tagIdsString = this.getAttribute('data-tags');
+
+                    // Gán giá trị vào form cập nhật
+                    document.getElementById('editId').value = id;
+                    document.getElementById('editTitle').value = title;
+                    document.getElementById('editHeadline').value = headline;
+                    document.getElementById('editContent').value = content;
+                    document.getElementById('editSource').value = source;
+                    document.getElementById('editCategoryId').value = categoryId;
+                    document.getElementById('editStatus').value = status;
+
+                    // Xử lý Checkbox Tags động dựa trên luật "một tag thuộc tối đa 1 bài báo"
+                    const currentTagIds = tagIdsString ? tagIdsString.split(',').map(Number) : [];
+
+                    document.querySelectorAll('.edit-tag-checkbox').forEach(cb => {
+                        const tagId = parseInt(cb.value);
+                        const isCurrent = currentTagIds.includes(tagId);
+                        
+                        // 1. Tự động tích chọn nếu tag đã thuộc bài viết đang sửa
+                        cb.checked = isCurrent;
+
+                        // 2. Nếu tag này đã bị bài khác chiếm dụng VÀ không thuộc bài đang sửa -> Khóa cứng (disabled)
+                        const isTakenByOthers = takenTagIds.includes(tagId) && !isCurrent;
+                        if (isTakenByOthers) {
+                            cb.disabled = true;
+                            cb.nextElementSibling.classList.add('text-muted');
+                            cb.nextElementSibling.innerText = cb.nextElementSibling.getAttribute('data-name') + " (Taken)";
+                        } else {
+                            cb.disabled = false;
+                            cb.nextElementSibling.classList.remove('text-muted');
+                            cb.nextElementSibling.innerText = cb.nextElementSibling.getAttribute('data-name');
+                        }
+                    });
+
+                    // Hiển thị modal
+                    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
+                });
+            });
+        });
+
+        function confirmDelete(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
+                document.getElementById('deleteForm-' + id).submit();
+            }
+        }
+    </script>
+}

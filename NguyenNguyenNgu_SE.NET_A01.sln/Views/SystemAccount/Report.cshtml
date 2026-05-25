@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Repositories.Models.NewsArticle>
+@{
+    ViewData["Title"] = "Báo Cáo Thống Kê Tin Tức";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white py-3">
+            <h3 class="mb-0 fw-bold"><i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Báo Cáo Thống Kê Tin Tức</h3>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Report" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-secondary">Từ Ngày (Start Date)</label>
+                    <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-secondary">Đến Ngày (End Date)</label>
+                    <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" required />
+                </div>
+                <div class="col-md-4 d-grid">
+                    <button type="submit" class="btn btn-primary fw-bold py-2">
+                        <i class="bi bi-funnel-fill me-1"></i> Trích Xuất Dữ Liệu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="alert alert-info py-2 shadow-sm d-flex align-items-center mb-3">
+            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+            <span>Tìm thấy <strong>@Model.Count()</strong> bài viết trong khoảng thời gian được chọn.</span>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-hover table-striped table-bordered mb-0">
+                    <thead class="table-primary text-dark">
+                        <tr>
+                            <th style="width: 10%;">Mã bài</th>
+                            <th style="width: 35%;">Tiêu đề bài viết</th>
+                            <th style="width: 15%;">Danh mục</th>
+                            <th style="width: 15%;">Tác giả (Staff)</th>
+                            <th style="width: 15%;" class="text-center">Ngày tạo (Giảm dần)</th>
+                            <th style="width: 10%;" class="text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.NewsArticleId</td>
+                                <td><span class="fw-bold text-dark">@item.NewsTitle</span></td>
+                                <td>@(item.Category != null ? item.Category.CategoryName : "N/A")</td>
+                                <td>@(item.CreatedBy != null ? item.CreatedBy.AccountName : "N/A")</td>
+                                <td class="text-center text-muted fw-bold">
+                                    @(item.CreatedDate?.ToString("dd/MM/yyyy HH:mm"))
+                                </td>
+                                <td class="text-center">
+                                    @if (item.NewsStatus == true)
+                                    {
+                                        <span class="badge bg-success">Published</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Draft</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (ViewBag.StartDate != null && ViewBag.EndDate != null)
+    {
+        <div class="alert alert-warning text-center shadow-sm py-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i>
+            <span class="fw-bold">Không có bài viết nào được tạo trong khoảng thời gian từ @ViewBag.StartDate đến @ViewBag.EndDate!</span>
+        </div>
+    }
+</div>

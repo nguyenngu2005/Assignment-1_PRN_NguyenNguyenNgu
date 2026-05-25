@@ -1,0 +1,406 @@
+@model NguyenNguyenNguMVC.Models.LoginViewModel
+@{
+    Layout = null; // Clean slate full bleed high-tech background
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In - FUNewsManagementSystem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #07090e;
+            --primary: #0ea5e9;       /* Cyan */
+            --primary-glow: rgba(14, 165, 233, 0.35);
+            --secondary: #6366f1;     /* Indigo */
+            --secondary-glow: rgba(99, 102, 241, 0.35);
+            
+            --glass-bg: rgba(15, 21, 36, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.16);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Tech grid overlay */
+        .tech-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.015) 1px, transparent 0),
+                radial-gradient(rgba(255,255,255,0.015) 1px, transparent 0);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .login-card-container {
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Glassmorphic card styling */
+        .glass-login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-login-card:hover {
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 24px rgba(14, 165, 233, 0.05);
+        }
+
+        /* Custom application crest logo */
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .app-crest {
+            width: 72px;
+            height: 72px;
+            filter: drop-shadow(0 0 12px var(--primary-glow));
+            animation: pulseCrest 4s infinite alternate ease-in-out;
+        }
+
+        @@keyframes pulseCrest {
+            0% { transform: scale(1); filter: drop-shadow(0 0 12px var(--primary-glow)); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 24px var(--secondary-glow)); }
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+            margin-top: 4px;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #0ea5e9, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .system-badge {
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        /* Inputs styled */
+        .form-group-custom {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group-custom label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-wrapper-custom {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .input-wrapper-custom:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .input-icon-left {
+            color: var(--text-muted);
+            padding-left: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper-custom .form-control {
+            background: transparent !important;
+            border: none !important;
+            color: #ffffff !important;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            box-shadow: none !important;
+            width: 100%;
+        }
+
+        .input-wrapper-custom .form-control::placeholder {
+            color: #475569;
+        }
+
+        /* Prevent chrome autofill light blue box overlapping and style it beautifully */
+        .input-wrapper-custom input:-webkit-autofill,
+        .input-wrapper-custom input:-webkit-autofill:hover, 
+        .input-wrapper-custom input:-webkit-autofill:focus, 
+        .input-wrapper-custom input:-webkit-autofill:active {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #090d16 inset !important;
+            box-shadow: 0 0 0px 1000px #090d16 inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .password-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding-right: 16px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Custom Validation Msg */
+        .field-validation-error {
+            font-size: 0.775rem;
+            color: #ef4444;
+            margin-top: 4px;
+            font-weight: 500;
+            display: block;
+        }
+
+        /* Error alerts */
+        .error-alert-glass {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #f87171;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            animation: shakeAlert 0.4s ease;
+        }
+
+        @@keyframes shakeAlert {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .alert-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Glowing Button */
+        .btn-authenticate {
+            background: linear-gradient(90deg, #0ea5e9 0%, #6366f1 100%);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-authenticate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.35);
+            opacity: 0.95;
+        }
+
+        .btn-authenticate:active {
+            transform: translateY(0);
+        }
+
+        .footer-lock {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tech-grid"></div>
+
+    <div class="login-card-container">
+        
+        <!-- Centered Glassmorphic card -->
+        <div class="glass-login-card animate-fade-in">
+            
+            <!-- Crest Shield Logo -->
+            <div class="logo-area">
+                <svg viewBox="0 0 100 100" class="app-crest">
+                    <polygon points="50,5 92,20 85,70 50,95 15,70 8,20" fill="url(#crestGrad)" />
+                    <polygon points="50,13 84,25 79,66 50,86 21,66 16,25" fill="#07090e" />
+                    <path d="M50,25 Q55,40 45,55 Q55,60 50,75 Q62,60 55,45 Q62,40 50,25 Z" fill="url(#fireGrad)" />
+                    <defs>
+                        <linearGradient id="crestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0ea5e9" />
+                            <stop offset="100%" stop-color="#818cf8" />
+                        </linearGradient>
+                        <linearGradient id="fireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" />
+                            <stop offset="100%" stop-color="#ec4899" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="logo-text" style="font-size: 1.5rem;">FUNews<span>ManagementSystem</span></div>
+                <div class="system-badge">Portal Sign In</div>
+            </div>
+
+            <!-- Stylized error banner -->
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="error-alert-glass" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+                    <div>@ViewBag.ErrorMessage</div>
+                </div>
+            }
+
+            <form asp-action="Index" method="post" autocomplete="off">
+                
+                <!-- Email Field -->
+                <div class="form-group-custom">
+                    <label asp-for="Email">Corporate Email</label>
+                    <div class="input-wrapper-custom">
+                        <span class="input-icon-left">
+                            <i class="bi bi-envelope-at"></i>
+                        </span>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="username@FUNewsManagementSystem.org" required />
+                    </div>
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <!-- Password Field (FIXED: Masks character input by using type="password" explicitly!) -->
+                <div class="form-group-custom">
+                    <label asp-for="Password">Secure Password</label>
+                    <div class="input-wrapper-custom">
+                        <span class="input-icon-left">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                        <input asp-for="Password" id="passwordField" class="form-control" type="password" placeholder="••••••••" required />
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <!-- Authenticate Button -->
+                <button type="submit" class="btn btn-authenticate">
+                    <i class="bi bi-fingerprint"></i>
+                    <span>Authenticate Account</span>
+                </button>
+            </form>
+
+            <!-- Secure SSL Encrypted Session Footer -->
+            <div class="footer-lock">
+                <i class="bi bi-shield-fill-check text-success"></i>
+                <span>SSL Secured Portal Connection</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Password toggle script -->
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("passwordField");
+            const toggleIcon = document.getElementById("toggleIcon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

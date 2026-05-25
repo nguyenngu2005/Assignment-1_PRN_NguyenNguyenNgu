@@ -1,0 +1,692 @@
+/*
+ * ==========================================
+ * FU NEWS PORTAL DESIGN SYSTEM
+ * Theme: Premium Dark Glassmorphism
+ * ==========================================
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark-900: #080b11;
+    --bg-dark-800: #0f1524;
+    --bg-dark-700: #172036;
+    
+    --primary: #0ea5e9;       /* Cyan */
+    --primary-glow: rgba(14, 165, 233, 0.25);
+    --secondary: #6366f1;     /* Indigo */
+    --secondary-glow: rgba(99, 102, 241, 0.2);
+    --accent: #10b981;        /* Emerald */
+    --accent-red: #f43f5e;    /* Rose Red */
+    
+    --glass-bg: rgba(15, 21, 36, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-hover: rgba(255, 255, 255, 0.16);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* Base Body Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--bg-dark-900);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.07) 0%, transparent 45%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-dark-900);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6, .fw-bold {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+    text-shadow: 0 0 16px var(--primary-glow);
+}
+
+/* Layout Grid Structure */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* Left Sidebar Navigation */
+.sidebar {
+    width: 280px;
+    background: rgba(10, 15, 26, 0.65);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-logo {
+    padding: 32px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-logo svg {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+}
+
+.sidebar-logo-text {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.sidebar-logo-text span {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* User identity card in Sidebar */
+.user-identity-card {
+    padding: 16px 20px;
+    margin: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+    flex-shrink: 0;
+}
+
+.user-identity-info {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-identity-email {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: 500;
+}
+
+.user-identity-role {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--primary);
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* Nav Menu */
+.sidebar-menu {
+    flex-grow: 1;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.925rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.sidebar-link i {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-link:hover i {
+    transform: translateX(2px);
+}
+
+.sidebar-link.active {
+    color: #ffffff;
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border: 1px solid rgba(14, 165, 233, 0.15);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.05);
+}
+
+.sidebar-link.active i {
+    color: var(--primary);
+}
+
+.sidebar-footer {
+    padding: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Content Area */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Top Navbar (Mobile Only) */
+.mobile-header {
+    display: none;
+    background: rgba(10, 15, 26, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 12px 24px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Master Grid Containers */
+.portal-container {
+    padding: 40px;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    flex-grow: 1;
+}
+
+/* ==========================================================
+ * BOOTSTRAP COMPONENTS OVERRIDES
+ * ========================================================== */
+
+/* 1. Cards (Glassmorphism styling) */
+.card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+    color: var(--text-primary) !important;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    border-color: var(--glass-border-hover) !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 16px rgba(14, 165, 233, 0.02) !important;
+}
+
+.card-header {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    padding: 20px 24px !important;
+    font-weight: 600 !important;
+}
+
+.card-body {
+    padding: 24px !important;
+}
+
+.card-footer {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-top: 1px solid var(--glass-border) !important;
+    padding: 16px 24px !important;
+}
+/* 2. Tables (High-tech Dark Table Grid) */
+.table-responsive {
+    border-radius: 12px;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border: 1px solid var(--glass-border);
+}
+
+.table {
+    color: var(--text-primary) !important;
+    background-color: transparent !important;
+    border-collapse: collapse;
+    margin-bottom: 0 !important;
+}
+
+.table > :not(caption) > * > * {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    padding: 16px 20px !important;
+    color: var(--text-primary) !important;
+    vertical-align: middle;
+}
+
+.table > thead {
+    background: rgba(14, 165, 233, 0.08) !important;
+    border-bottom: 2px solid rgba(14, 165, 233, 0.25) !important;
+}
+
+.table > thead > tr > th {
+    font-family: var(--font-heading) !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border-bottom: none !important;
+    padding: 16px 20px !important;
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    color: #ffffff !important;
+    box-shadow: inset 2px 0 0 var(--primary) !important;
+}
+
+.table-bordered {
+    border: 1px solid var(--glass-border) !important;
+}
+
+.table-bordered > :not(caption) > * > * {
+    border: 1px solid var(--glass-border) !important;
+}
+
+/* 3. Form Control Elements */
+.form-control, .form-select, textarea {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    border: 1.5px solid var(--glass-border) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    padding: 10px 16px !important;
+    font-size: 0.925rem !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.form-control:focus, .form-select:focus, textarea:focus {
+    background-color: rgba(0, 0, 0, 0.35) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+    color: #ffffff !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.8;
+}
+
+.input-group-text {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    border: 1.5px solid var(--glass-border) !important;
+    border-right: none !important;
+    color: var(--text-muted) !important;
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px !important;
+}
+
+.form-label, label {
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 6px;
+}
+
+/* Switches & Checkboxes */
+.form-check-input {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border: 1.5px solid var(--glass-border) !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 8px var(--primary-glow) !important;
+}
+
+/* 4. Glassmorphic Buttons */
+.btn {
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    font-family: var(--font-heading) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25) !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
+    opacity: 0.95;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2) !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3) !important;
+    opacity: 0.95;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.2) !important;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.3) !important;
+    opacity: 0.95;
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-secondary) !important;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-primary {
+    border: 1.5px solid var(--primary) !important;
+    color: var(--primary) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(14, 165, 233, 0.1) !important;
+    color: #ffffff !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-outline-danger {
+    border: 1.5px solid var(--accent-red) !important;
+    color: var(--accent-red) !important;
+    background: transparent !important;
+}
+
+.btn-outline-danger:hover {
+    background: rgba(244, 63, 94, 0.1) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-red) !important;
+}
+
+/* 5. Modals (Glassmorphic popup overlay) */
+.modal-content {
+    background: rgba(12, 18, 33, 0.75) !important;
+    backdrop-filter: blur(28px) !important;
+    -webkit-backdrop-filter: blur(28px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.6) !important;
+    color: var(--text-primary) !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--glass-border) !important;
+    padding: 20px 24px !important;
+}
+
+.modal-header.bg-primary, .modal-header.bg-success, .modal-header.bg-danger {
+    background: rgba(255, 255, 255, 0.02) !important; /* Neutralize bright primary headers with transparent neon borders */
+    border-bottom: 2px solid var(--primary) !important;
+}
+
+.modal-header.bg-success {
+    border-bottom: 2px solid var(--accent) !important;
+}
+
+.modal-header.bg-danger {
+    border-bottom: 2px solid var(--accent-red) !important;
+}
+
+.modal-title {
+    font-weight: 700 !important;
+    font-family: var(--font-heading) !important;
+    color: #ffffff !important;
+}
+
+.modal-body {
+    padding: 24px !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--glass-border) !important;
+    padding: 16px 24px !important;
+}
+
+.btn-close {
+    filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+/* 6. Alerts & Badges */
+.alert {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 24px;
+}
+
+.alert-success {
+    border-color: rgba(16, 185, 129, 0.25) !important;
+    background: rgba(16, 185, 129, 0.06) !important;
+    color: #34d399 !important;
+}
+
+.alert-danger {
+    border-color: rgba(244, 63, 94, 0.25) !important;
+    background: rgba(244, 63, 94, 0.06) !important;
+    color: #f87171 !important;
+}
+
+.badge {
+    padding: 6px 12px !important;
+    border-radius: 9999px !important;
+    font-family: var(--font-heading) !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.bg-success {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    color: #34d399 !important;
+}
+
+.bg-secondary {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-secondary) !important;
+}
+
+.bg-danger {
+    background: rgba(244, 63, 94, 0.15) !important;
+    border: 1px solid rgba(244, 63, 94, 0.3) !important;
+    color: #f87171 !important;
+}
+
+.bg-primary {
+    background: rgba(14, 165, 233, 0.15) !important;
+    border: 1px solid rgba(14, 165, 233, 0.3) !important;
+    color: var(--primary) !important;
+}
+
+.bg-info {
+    background: rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #818cf8 !important;
+}
+
+/* Reset focus state on standard buttons */
+.btn-close:focus {
+    box-shadow: none !important;
+}
+
+/* ==========================================================
+ * CLASSIC BOOTSTRAP OVERRIDES (THEMING UTILITIES)
+ * ========================================================== */
+
+/* Overriding white and dark helper backgrounds so they don't break our theme */
+.bg-white {
+    background-color: transparent !important;
+}
+
+.bg-light {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* text overrides to ensure readability under dark canvas */
+.text-dark {
+    color: #ffffff !important;
+}
+
+.text-black {
+    color: #ffffff !important;
+}
+
+.text-black-50 {
+    color: var(--text-secondary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.border-top-0 {
+    border-top: none !important;
+}
+
+/* ==========================================================
+ * RESPONSIVENESS AND COLLAPSIBLE MOBILE MENU
+ * ========================================================== */
+
+@media (max-width: 991.98px) {
+    .app-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .main-content {
+        height: calc(100vh - 60px);
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+
+    .portal-container {
+        padding: 24px 16px;
+    }
+}

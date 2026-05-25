@@ -1,0 +1,188 @@
+@using Microsoft.AspNetCore.Http
+@{
+    var userEmail = Context.Session.GetString("Email");
+    var userRole = Context.Session.GetInt32("Role");
+    var userRoleName = userRole switch
+    {
+        0 => "Administrator",
+        1 => "Staff Member",
+        2 => "Lecturer",
+        _ => "Guest User"
+    };
+    var initial = !string.IsNullOrEmpty(userEmail) ? userEmail.Substring(0, 1).ToUpper() : "U";
+    
+    // Detect active controller & action
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FUNewsManagementSystem</title>
+    
+    <!-- Design System Style Assets -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/NguyenNguyenNguMVC.styles.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="app-wrapper">
+        
+        <!-- Premium Translucent Navigation Sidebar -->
+        <aside class="sidebar" id="sidebar-menu-panel">
+            
+            <!-- Branding Area -->
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 100 100">
+                    <polygon points="50,5 92,20 85,70 50,95 15,70 8,20" fill="url(#layoutCrest)" />
+                    <polygon points="50,13 84,25 79,66 50,86 21,66 16,25" fill="#0c1221" />
+                    <path d="M50,25 Q55,40 45,55 Q55,60 50,75 Q62,60 55,45 Q62,40 50,25 Z" fill="url(#layoutFire)" />
+                    <defs>
+                        <linearGradient id="layoutCrest" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0ea5e9" />
+                            <stop offset="100%" stop-color="#6366f1" />
+                        </linearGradient>
+                        <linearGradient id="layoutFire" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" />
+                            <stop offset="100%" stop-color="#ec4899" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="sidebar-logo-text" style="font-size: 1.15rem;">FUNews<span>Management</span></div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(userEmail))
+            {
+                <!-- Identity Card (Live session widget) -->
+                <div class="user-identity-card">
+                    <div class="avatar-circle">
+                        @initial
+                    </div>
+                    <div class="user-identity-info">
+                        <span class="user-identity-email" title="@userEmail">@userEmail</span>
+                        <span class="user-identity-role">@userRoleName</span>
+                    </div>
+                </div>
+            }
+
+            <!-- Navigation Links List (Dynamically Filtered by Role Roles) -->
+            <nav class="sidebar-menu">
+                
+                @if (userRole == 0) // Administrator
+                {
+                    <div class="text-uppercase text-muted px-3 mt-3 mb-2" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;">Control Center</div>
+                    
+                    <a href="/SystemAccount/Index" class="sidebar-link @(currentController == "SystemAccount" && currentAction == "Index" ? "active" : "")">
+                        <i class="bi bi-shield-check"></i>
+                        <span>System Accounts</span>
+                    </a>
+                    
+                    <a href="/SystemAccount/Report" class="sidebar-link @(currentController == "SystemAccount" && currentAction == "Report" ? "active" : "")">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                        <span>Analytical Reports</span>
+                    </a>
+                }
+                else if (userRole == 1) // Staff Member
+                {
+                    <div class="text-uppercase text-muted px-3 mt-3 mb-2" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;">Management</div>
+                    
+                    <a href="/Category/Index" class="sidebar-link @(currentController == "Category" ? "active" : "")">
+                        <i class="bi bi-tags"></i>
+                        <span>News Categories</span>
+                    </a>
+                    
+                    <a href="/NewsArticle/Index" class="sidebar-link @(currentController == "NewsArticle" ? "active" : "")">
+                        <i class="bi bi-journal-text"></i>
+                        <span>News Articles</span>
+                    </a>
+                }
+
+                <!-- Shared Items Accessible for All Logged Users -->
+                <div class="text-uppercase text-muted px-3 mt-3 mb-2" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;">Academic Feeds</div>
+                
+                <a href="/NewsFeed/Index" class="sidebar-link @(currentController == "NewsFeed" ? "active" : "")">
+                    <i class="bi bi-newspaper"></i>
+                    <span>Portal News Feed</span>
+                </a>
+                
+                <a href="/Profile/Index" class="sidebar-link @(currentController == "Profile" ? "active" : "")">
+                    <i class="bi bi-person-badge"></i>
+                    <span>My Profile</span>
+                </a>
+
+            </nav>
+
+            <!-- Sidebar Exit Trigger -->
+            <div class="sidebar-footer">
+                <a href="/Login/Logout" class="sidebar-link text-danger border-0 w-100" style="background: rgba(244, 63, 94, 0.05); border: 1px solid rgba(244, 63, 94, 0.15) !important;">
+                    <i class="bi bi-door-closed"></i>
+                    <span>Log Out Session</span>
+                </a>
+            </div>
+
+        </aside>
+
+        <!-- Right Side Main Content Wrapper -->
+        <div class="main-content">
+            
+            <!-- Mobile Sticky Top Bar Header -->
+            <header class="mobile-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="sidebar-logo-text" style="font-size: 1.2rem;">FUNews<span>ManagementSystem</span></div>
+                </div>
+                <button type="button" class="btn btn-secondary p-2 d-lg-none" id="mobile-sidebar-toggler">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+            </header>
+
+            <!-- Render Body Area -->
+            <main class="portal-container">
+                @RenderBody()
+            </main>
+
+            <!-- Centralized Footer Panel -->
+            <footer class="py-3 text-center" style="border-top: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.15); font-size: 0.8rem; color: var(--text-muted);">
+                <div class="container-fluid">
+                    &copy; 2026 - <strong>FUNewsManagementSystem</strong>. Designed with Premium Glassmorphism.
+                </div>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts Bundle -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Mobile Menu Handler -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar-menu-panel");
+            const toggler = document.getElementById("mobile-sidebar-toggler");
+            
+            if (toggler && sidebar) {
+                toggler.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle("show");
+                });
+                
+                // Close sidebar when clicking outside on mobile view
+                document.addEventListener("click", function (e) {
+                    if (sidebar.classList.contains("show") && !sidebar.contains(e.target) && e.target !== toggler) {
+                        sidebar.classList.remove("show");
+                    }
+                });
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

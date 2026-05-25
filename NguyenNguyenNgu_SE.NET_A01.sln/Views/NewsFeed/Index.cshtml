@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Repositories.Models.NewsArticle>
+@{
+    ViewData["Title"] = "Tin Tức Mới Nhất";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary display-5">Bảng Tin Của Hệ Thống</h2>
+        <p class="text-muted">Cập nhật những tin tức và thông báo mới nhất</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 transition-hover">
+                        <div class="card-body">
+                            <span class="badge bg-info text-dark mb-2">@(item.Category?.CategoryName ?? "Chung")</span>
+                            <h5 class="card-title fw-bold text-dark">@item.NewsTitle</h5>
+                            <h6 class="card-subtitle mb-3 text-muted">@item.Headline</h6>
+                            <p class="card-text text-secondary" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                @item.NewsContent
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i> @(item.CreatedDate?.ToString("dd/MM/yyyy"))</small>
+                                <small class="text-primary fw-bold">Bởi: @(item.CreatedBy?.AccountName ?? "Admin")</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted">Hiện tại chưa có bài viết nào được xuất bản.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .transition-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .transition-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+</style>
